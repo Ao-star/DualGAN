@@ -85,7 +85,7 @@ def train_cycle_gan(dataset_A_path, dataset_B_path, output_path, num_epochs=200,
                 # 生成一些样本并保存
 
 # 调用训练函数
-dataset_A_path = "path_to_dataset_A"
-dataset_B_path = "path_to_dataset_B"
-output_path = "path_to_output"
+dataset_A_path = "/run/media/teamshare/workspace_bingo05/uvcgan2-main/data/patch_data/train/source/"
+dataset_B_path = "/run/media/teamshare/workspace_bingo05/uvcgan2-main/data/patch_data/train/target/"
+output_path = "/run/media/teamshare/workspace_bingo05/uvcgan2-main/outdir/result/"
 train_cycle_gan(dataset_A_path, dataset_B_path, output_path)
