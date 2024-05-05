@@ -3,10 +3,11 @@ from osgeo import gdal
 import numpy as np
 import torch
 from torch.utils.data import Dataset
-from uvcgan2.consts import SPLIT_TRAIN
+from consts import SPLIT_TRAIN
 from image_domain_folder import ImageDomainFolder
 import PIL.Image
 from torchvision import transforms
+
 class ImageDomainHierarchy(Dataset):
 
     def __init__(
