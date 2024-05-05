@@ -2,7 +2,7 @@ import os
 from torch.utils.data import Dataset
 from torchvision.datasets.folder import IMG_EXTENSIONS
 import torch
-from uvcgan2.consts import SPLIT_TRAIN
+from consts import SPLIT_TRAIN
 from osgeo import gdal
 
 
