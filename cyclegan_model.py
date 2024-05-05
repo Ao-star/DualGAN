@@ -7,34 +7,6 @@ from osgeo import gdal
 import numpy as np
 import os
 
-# 定义数据集
-class CycleGANDataset(Dataset):
-    def __init__(self, root):
-        self.root = root
-        self.image_list = os.listdir(self.root)
-
-    def __len__(self):
-        return len(self.image_list)
-
-    def __getitem__(self, index):
-        image_file = self.image_list[index]
-        image_path = os.path.join(self.root, image_file)
-        image = gdal.Open(image_path).ReadAsArray() # 使用GDAL库读取影像数据
-        image = np.transpose(image, [1, 2, 0]).astype(np.float32) # 调整通道顺序并转换数据类型
-        image /= 255.0 # 归一化到[0, 1]
-        return image
-
-    def loader_image(self, path):
-        dataset = gdal.Open(path, gdal.GA_ReadOnly).ReadAsArray().astype('float32')
-        if dataset is None:
-            raise FileNotFoundError(f"Could not open {path}")
-        if dataset.ndim == 3:
-            return np.uint8(dataset.swapaxes(0,1).swapaxes(1,2))
-        else:
-            # return np.uint8(dataset)
-            mat = np.uint8(dataset)[:,:,np.newaxis]
-            return np.concatenate((mat,mat,mat),axis=2)
-
 
 # 定义生成器
 class Generator(nn.Module):
