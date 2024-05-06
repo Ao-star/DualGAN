@@ -1,5 +1,5 @@
-from uvcgan2.base.networks import select_base_discriminator
-from uvcgan2.models.funcs  import default_model_init
+from base.networks import select_base_discriminator
+from models.funcs  import default_model_init
 
 def select_discriminator(name, **kwargs):
     return select_base_discriminator(name, **kwargs)
