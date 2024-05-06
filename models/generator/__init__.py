@@ -1,5 +1,5 @@
-from uvcgan2.base.networks    import select_base_generator
-from uvcgan2.models.funcs     import default_model_init
+from base.networks    import select_base_generator
+from models.funcs     import default_model_init
 
 from .vit       import ViTGenerator
 from .vitunet   import ViTUNetGenerator
