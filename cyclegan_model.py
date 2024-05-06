@@ -83,7 +83,7 @@ class ImageDomainFolder(Dataset):
         if dataset is None:
             raise FileNotFoundError(f"Could not open {path}")
 
-        print(torch.from_numpy(dataset))
+        # print(torch.from_numpy(dataset))
         return torch.from_numpy(dataset)
 
 
@@ -125,16 +125,78 @@ class ImageDomainHierarchy(Dataset):
         
 # 定义生成器
 class Generator(nn.Module):
-    def __init__(self):
+    def __init__(self, input_channels, output_channels, num_filters=64, num_resnet_blocks=9):
         super(Generator, self).__init__()
 
-        # 定义网络结构
-        ...
+        # 定义编码器（从域A到域B的转换）
+        self.encoder = self.build_encoder(input_channels, num_filters)
+        
+        # 定义解码器（从域B到域A的转换）
+        self.decoder = self.build_decoder(output_channels, num_filters, num_resnet_blocks)
 
     def forward(self, x):
-        # 实现前向传播
-        ...
+        # 域A到域B的转换
+        encoded = self.encoder(x)
+        
+        # 域B到域A的转换
+        decoded = self.decoder(encoded)
 
+        return decoded
+
+    def build_encoder(self, input_channels, num_filters):
+        encoder = nn.Sequential(
+            nn.Conv2d(input_channels, num_filters, kernel_size=7, stride=1, padding=3),
+            nn.InstanceNorm2d(num_filters),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(num_filters, num_filters * 2, kernel_size=3, stride=2, padding=1),
+            nn.InstanceNorm2d(num_filters * 2),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(num_filters * 2, num_filters * 4, kernel_size=3, stride=2, padding=1),
+            nn.InstanceNorm2d(num_filters * 4),
+            nn.ReLU(inplace=True)
+        )
+
+        return encoder
+
+    def build_decoder(self, output_channels, num_filters, num_resnet_blocks):
+        resnet_blocks = []
+        for _ in range(num_resnet_blocks):
+            resnet_blocks.append(ResnetBlock(num_filters * 4))
+        
+        decoder = nn.Sequential(
+            nn.ConvTranspose2d(num_filters * 4, num_filters * 2, kernel_size=3, stride=2, padding=1, output_padding=1),
+            nn.InstanceNorm2d(num_filters * 2),
+            nn.ReLU(inplace=True),
+            nn.ConvTranspose2d(num_filters * 2, num_filters, kernel_size=3, stride=2, padding=1, output_padding=1),
+            nn.InstanceNorm2d(num_filters),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(num_filters, output_channels, kernel_size=7, stride=1, padding=3),
+            nn.Tanh()
+        )
+
+        return nn.Sequential(*resnet_blocks, decoder)
+
+class ResnetBlock(nn.Module):
+    def __init__(self, num_filters):
+        super(ResnetBlock, self).__init__()
+
+        self.conv1 = nn.Conv2d(num_filters, num_filters, kernel_size=3, stride=1, padding=1)
+        self.norm1 = nn.InstanceNorm2d(num_filters)
+        self.relu = nn.ReLU(inplace=True)
+        self.conv2 = nn.Conv2d(num_filters, num_filters, kernel_size=3, stride=1, padding=1)
+        self.norm2 = nn.InstanceNorm2d(num_filters)
+
+    def forward(self, x):
+        residual = x
+
+        out = self.conv1(x)
+        out = self.norm1(out)
+        out = self.relu(out)
+        out = self.conv2(out)
+        out = self.norm2(out)
+        out = out + residual  # 残差连接
+
+        return out
 
 # 定义判别器
 class Discriminator(nn.Module):
