@@ -138,17 +138,6 @@ def compute_gradient_penalty(D, real_samples, fake_samples):
     return gradient_penalty
 
 
-# def sample_images(batches_done):
-#     """Saves a generated sample from the test set"""
-#     imgs = next(iter(val_dataloader))
-#     real_A = Variable(imgs["A"].type(FloatTensor))
-#     fake_B = G_AB(real_A)
-#     AB = torch.cat((real_A.data, fake_B.data), -2)
-#     real_B = Variable(imgs["B"].type(FloatTensor))
-#     fake_A = G_BA(real_B)
-#     BA = torch.cat((real_B.data, fake_A.data), -2)
-#     img_sample = torch.cat((AB, BA), 0)
-#     save_image(img_sample, "images/%s/%s.png" % (opt.dataset_name, batches_done), nrow=8, normalize=True)
 def sample_images(batches_done):
     """Saves a generated sample from the test set"""
     imgs = next(iter(val_dataloader))
@@ -283,12 +272,6 @@ for epoch in range(opt.n_epochs):
         batches_done += 1
         
         with torch.no_grad():
-            # D_A_loss_sum = D_A_loss_sum + D_A_loss.cpu().numpy()  
-            # D_B_loss_sum = D_B_loss_sum + D_B_loss.cpu().numpy()   
-            # D_loss_sum = D_loss_sum + D_loss.cpu().numpy()   
-            # G_adv_sum = G_adv_sum + G_adv.cpu().numpy()   
-            # G_cycle_sum = G_cycle_sum + G_cycle.cpu().numpy()   
-            # G_loss_sum = G_loss_sum + G_loss.cpu().numpy() 
             D_A_loss_sum = D_A_loss_sum + D_A_loss.item()
             D_B_loss_sum = D_B_loss_sum + D_B_loss.item()   
             D_loss_sum = D_loss_sum + D_loss.item()   
