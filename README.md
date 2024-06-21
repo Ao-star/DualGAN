@@ -1,1 +1,1 @@
-# CycleGAN
+# DualGAN
